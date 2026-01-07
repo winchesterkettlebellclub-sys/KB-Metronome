@@ -32,15 +32,16 @@
 
         .header {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 25px;
         }
 
         .logo {
-            width: 60px;
-            height: 60px;
+            width: 90px;
+            height: 90px;
         }
 
         .logo img {
@@ -52,14 +53,8 @@
         h1 {
             text-align: center;
             color: #ffffff;
-            font-size: 28px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #888;
-            margin-bottom: 25px;
-            font-size: 14px;
+            font-size: clamp(20px, 4vw, 32px);
+            white-space: nowrap;
         }
 
         .lift-selector {
@@ -240,7 +235,6 @@
             </div>
             <h1>Kettlebell Sport Metronome</h1>
         </div>
-        <p class="subtitle">Follow-along motion-capture animation</p>
         
         <div class="lift-selector">
             <label for="liftSelect">Select Lift</label>
