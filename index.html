@@ -298,29 +298,62 @@
         const slider = document.getElementById('rpmSlider');
         const rpmDisplay = document.getElementById('rpmValue');
         const speedDisplay = document.getElementById('speedValue');
-        const presetButtons = document.querySelectorAll('.preset-btn');
         const liftSelect = document.getElementById('liftSelect');
 
-        // Base RPM at 1x speed
-        const BASE_RPM = 22;
-        // Speed adjustment factor
-        const SPEED_FACTOR = 0.92;
+        // Lift-specific configurations
+        const liftConfigs = {
+            'snatch.mp4': {
+                baseRPM: 22,
+                speedFactor: 0.92,
+                minRPM: 16,
+                maxRPM: 30,
+                step: 0.5,
+                presets: [16, 18, 20, 22, 24, 26, 28, 30],
+                defaultRPM: 22
+            },
+            'double-long-cycle.mp4': {
+                baseRPM: 14,
+                speedFactor: 1.0,
+                minRPM: 6,
+                maxRPM: 16,
+                step: 0.5,
+                presets: [6, 8, 10, 12, 14, 16],
+                defaultRPM: 14
+            },
+            // Default config for other lifts (use snatch settings)
+            'default': {
+                baseRPM: 22,
+                speedFactor: 0.92,
+                minRPM: 16,
+                maxRPM: 30,
+                step: 0.5,
+                presets: [16, 18, 20, 22, 24, 26, 28, 30],
+                defaultRPM: 22
+            }
+        };
+
+        function getCurrentConfig() {
+            const currentLift = liftSelect.value;
+            return liftConfigs[currentLift] || liftConfigs['default'];
+        }
 
         function updatePlayback(rpm) {
+            const config = getCurrentConfig();
+            
             // Calculate playback speed based on RPM with adjustment factor
-            const playbackSpeed = (rpm / BASE_RPM) * SPEED_FACTOR;
+            const playbackSpeed = (rpm / config.baseRPM) * config.speedFactor;
             
             // Update video playback rate
             video.playbackRate = playbackSpeed;
             
             // Update displays
             rpmDisplay.textContent = rpm;
-            speedDisplay.textContent = playbackSpeed.toFixed(2) + 'x';
             
             // Update slider if called from preset button
             slider.value = rpm;
             
             // Update active button state
+            const presetButtons = document.querySelectorAll('.preset-btn');
             presetButtons.forEach(btn => {
                 if (parseFloat(btn.dataset.rpm) === parseFloat(rpm)) {
                     btn.classList.add('active');
@@ -330,18 +363,48 @@
             });
         }
 
+        function updateControlsForLift() {
+            const config = getCurrentConfig();
+            
+            // Update slider
+            slider.min = config.minRPM;
+            slider.max = config.maxRPM;
+            slider.step = config.step;
+            slider.value = config.defaultRPM;
+            
+            // Update range labels
+            const rangeLabels = document.querySelector('.range-labels');
+            rangeLabels.innerHTML = `
+                <span>${config.minRPM} RPM</span>
+                <span>${config.defaultRPM} RPM</span>
+                <span>${config.maxRPM} RPM</span>
+            `;
+            
+            // Update preset buttons
+            const presetsContainer = document.querySelector('.preset-buttons');
+            presetsContainer.innerHTML = '';
+            config.presets.forEach(rpm => {
+                const btn = document.createElement('button');
+                btn.className = 'preset-btn';
+                if (rpm === config.defaultRPM) {
+                    btn.classList.add('active');
+                }
+                btn.dataset.rpm = rpm;
+                btn.textContent = rpm;
+                btn.addEventListener('click', () => {
+                    updatePlayback(parseFloat(btn.dataset.rpm));
+                });
+                presetsContainer.appendChild(btn);
+            });
+            
+            // Update to default RPM
+            updatePlayback(config.defaultRPM);
+        }
+
         // Slider event listener
         slider.addEventListener('input', (e) => {
             const rpm = parseFloat(e.target.value);
             updatePlayback(rpm);
-        });
-
-        // Preset button event listeners
-        presetButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const rpm = parseFloat(btn.dataset.rpm);
-                updatePlayback(rpm);
-            });
         });
 
         // Lift selector event listener
@@ -350,13 +413,13 @@
             videoSource.src = e.target.value;
             video.load();
             video.play();
-            // Maintain current RPM setting
-            updatePlayback(parseFloat(slider.value));
+            // Update controls for the new lift
+            updateControlsForLift();
         });
 
         // Initialize video
         video.addEventListener('loadedmetadata', () => {
-            updatePlayback(22);
+            updateControlsForLift();
         });
 
         // Ensure video plays (some browsers require user interaction)
