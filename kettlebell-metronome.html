@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kettlebell Sport Snatch Metronome</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .rpm-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .rpm-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            line-height: 1;
+        }
+
+        .rpm-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .speed-info {
+            text-align: center;
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .slider-container {
+            margin-bottom: 20px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .preset-btn {
+            padding: 10px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .preset-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .info-box {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏋️ Kettlebell Sport Snatch Metronome</h1>
+        <p class="subtitle">Follow-along motion-capture animation</p>
+        
+        <div class="video-container">
+            <video id="kbVideo" loop muted playsinline autoplay>
+                <source src="Markov snatch mocap.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="controls">
+            <div class="rpm-display">
+                <div class="rpm-value" id="rpmValue">22</div>
+                <div class="rpm-label">RPM (Reps Per Minute)</div>
+            </div>
+
+            <div class="speed-info">
+                Playback Speed: <strong id="speedValue">1.00x</strong>
+            </div>
+
+            <div class="slider-container">
+                <input type="range" id="rpmSlider" min="16" max="30" step="0.5" value="22">
+                <div class="range-labels">
+                    <span>16 RPM</span>
+                    <span>22 RPM</span>
+                    <span>30 RPM</span>
+                </div>
+            </div>
+
+            <div class="preset-buttons">
+                <button class="preset-btn" data-rpm="16">16</button>
+                <button class="preset-btn" data-rpm="18">18</button>
+                <button class="preset-btn" data-rpm="20">20</button>
+                <button class="preset-btn active" data-rpm="22">22</button>
+                <button class="preset-btn" data-rpm="24">24</button>
+                <button class="preset-btn" data-rpm="26">26</button>
+                <button class="preset-btn" data-rpm="28">28</button>
+                <button class="preset-btn" data-rpm="30">30</button>
+            </div>
+
+            <div class="info-box">
+                <strong>How to use:</strong> Adjust the slider or click preset buttons to set your target RPM. The video will automatically adjust playback speed to match. The original video is filmed at 22 RPM (1x speed).
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('kbVideo');
+        const slider = document.getElementById('rpmSlider');
+        const rpmDisplay = document.getElementById('rpmValue');
+        const speedDisplay = document.getElementById('speedValue');
+        const presetButtons = document.querySelectorAll('.preset-btn');
+
+        // Base RPM at 1x speed
+        const BASE_RPM = 22;
+
+        function updatePlayback(rpm) {
+            // Calculate playback speed based on RPM
+            const playbackSpeed = rpm / BASE_RPM;
+            
+            // Update video playback rate
+            video.playbackRate = playbackSpeed;
+            
+            // Update displays
+            rpmDisplay.textContent = rpm;
+            speedDisplay.textContent = playbackSpeed.toFixed(2) + 'x';
+            
+            // Update slider if called from preset button
+            slider.value = rpm;
+            
+            // Update active button state
+            presetButtons.forEach(btn => {
+                if (parseFloat(btn.dataset.rpm) === parseFloat(rpm)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // Slider event listener
+        slider.addEventListener('input', (e) => {
+            const rpm = parseFloat(e.target.value);
+            updatePlayback(rpm);
+        });
+
+        // Preset button event listeners
+        presetButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const rpm = parseFloat(btn.dataset.rpm);
+                updatePlayback(rpm);
+            });
+        });
+
+        // Initialize video
+        video.addEventListener('loadedmetadata', () => {
+            updatePlayback(22);
+        });
+
+        // Ensure video plays (some browsers require user interaction)
+        video.play().catch(e => {
+            console.log('Autoplay prevented, clicking will start playback');
+        });
+    </script>
+</body>
+</html>
